@@ -1,6 +1,8 @@
+from typing import Optional
+
 import models
 from authentication import oauth2
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends
 from repositories.user import UserRepository
 from schemas import token_schemas, user_schemas
 
@@ -13,7 +15,7 @@ class UserService:
     def __init__(self, user_repository: UserRepository = Depends()):
         self.user_repo = user_repository
 
-    def get_user(self, email: str) -> models.User:
+    def get_user(self, email: str) -> Optional[models.User]:
         """
         Fetch a user by email.
 
@@ -25,15 +27,12 @@ class UserService:
         """
         user = self.user_repo.get_user(email=email)
         if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"User with email {email} not found",
-            )
+            return None
         return user
 
     def create_user(
         self, new_user_info: user_schemas.UserCreate
-    ) -> token_schemas.Token:
+    ) -> Optional[token_schemas.Token]:
         """
         Create a new user and return an authentication token.
 
@@ -44,6 +43,9 @@ class UserService:
             token_schemas.Token: The access token for the new user.
         """
         new_user = self.user_repo.create_user(new_user_info=new_user_info)
+
+        if new_user is None:
+            return None
 
         access_token = oauth2.create_access_token(data={"user_email": new_user.email})
 

@@ -1,5 +1,6 @@
+from typing import Optional
+
 import models
-from fastapi import HTTPException, status
 from repositories.base import BaseRepository
 from schemas import user_schemas
 from utils import utils
@@ -10,7 +11,7 @@ class UserRepository(BaseRepository):
     Repository class for handling database operations related to User.
     """
 
-    def get_user(self, email: str) -> models.User:
+    def get_user(self, email: str) -> Optional[models.User]:
         """
         Retrieve a user from the database by email.
 
@@ -26,7 +27,9 @@ class UserRepository(BaseRepository):
             .one_or_none()
         )
 
-    def create_user(self, new_user_info: user_schemas.UserCreate) -> models.User:
+    def create_user(
+        self, new_user_info: user_schemas.UserCreate
+    ) -> Optional[models.User]:
         """
         Create a new user in the database.
 
@@ -46,9 +49,7 @@ class UserRepository(BaseRepository):
         )
 
         if existing_user:
-            raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT, detail="User already exists"
-            )
+            return None
 
         hashed_password = utils.hash(new_user_info.password)
         new_user_info.password = hashed_password
