@@ -1,1 +1,36 @@
 
+services:
+  notes-backend:
+    build:
+      context: ./notes_backend
+      dockerfile: Dockerfile
+    container_name: notes-backend
+    env_file:
+        - ./notes_backend/.env
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./notes_backend/src:/app
+    command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8001", "--reload"]
+
+  db:
+    image: postgres:15.10
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: 1421
+      POSTGRES_DB: note_db
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    ports:
+      - "9090:8080"
+
+volumes:
+  postgres-db:
+    driver: local
