@@ -1,7 +1,6 @@
+from configs.database import get_db
 from fastapi import Depends
 from sqlalchemy import orm
-
-from configs.database import get_db
 
 
 class BaseRepository:

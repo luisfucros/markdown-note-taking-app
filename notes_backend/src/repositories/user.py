@@ -1,6 +1,5 @@
-from fastapi import HTTPException, status
-
 import models
+from fastapi import HTTPException, status
 from repositories.base import BaseRepository
 from schemas import user_schemas
 from utils import utils
