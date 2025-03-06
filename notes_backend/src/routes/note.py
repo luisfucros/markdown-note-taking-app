@@ -28,7 +28,7 @@ def get_note(
     if note is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"note with id: {id} was not found",
+            detail=f"Note with id: {id} was not found",
         )
     return note
 
@@ -43,7 +43,7 @@ def get_markdown_note(
         note = service.get_markdown_note(id, current_user)
         if note is None:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="could not find note"
+                status_code=status.HTTP_404_NOT_FOUND, detail=f"Note with id: {id} was not found"
             )
         return note
     except HTTPException as e:
@@ -51,7 +51,7 @@ def get_markdown_note(
     except Exception:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="internal server error",
+            detail="Internal server error",
         )
 
 
@@ -74,8 +74,7 @@ def create_note(
     service: NoteService = Depends(),
     current_user: user_schemas.UserOut = Depends(oauth2.get_current_user),
 ):
-    note = service.create_note(user=current_user, note=note)
-    return note
+    return service.create_note(user=current_user, note=note)
 
 
 @router.post("/markdown")
@@ -87,14 +86,14 @@ async def upload_markdown_file(
     if file.filename is not None and not file.filename.endswith(".md"):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="only markdown files are allowed. Please upload a valid .md file.",
+            detail="Only markdown files are allowed. Please upload a valid .md file.",
         )
-    file_content = await file.read()
     try:
+        file_content = await file.read()
         markdown_text = file_content.decode("utf-8")
     except Exception:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="empty or corrupt file."
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Empty or corrupt file."
         )
 
     mark_down_note = note_schemas.NoteCreate(title=file.filename, note=markdown_text)

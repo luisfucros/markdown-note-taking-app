@@ -24,13 +24,7 @@ class NoteRepository(BaseRepository):
         Returns:
             models.Note: The requested note.
         """
-        note = (
-            self.session.query(models.Note)
-            .filter_by(id=note_id, owner_id=user.id)
-            .one_or_none()
-        )
-
-        return note
+        return self._get_user_note(note_id, user.id)
 
     def get_notes(
         self,
@@ -51,25 +45,24 @@ class NoteRepository(BaseRepository):
         Returns:
             List[models.Note]: A list of notes matching the criteria.
         """
-        skip = (page - 1) * limit if page > 1 else 0
+        query = self.session.query(models.Note).filter(models.Note.owner_id == user.id)
 
+        if search:
+            query = query.filter(models.Note.title.contains(search))
+
+        total = query.count()
         notes = (
-            self.session.query(models.Note)
-            .filter(models.Note.owner_id == user.id)
-            .filter(models.Note.title.contains(search))
-            .order_by(models.Note.created_at.desc())
+            query.order_by(models.Note.created_at.desc())
             .limit(limit)
-            .offset(skip)
+            .offset((page - 1) * limit if page > 1 else 0)
             .all()
         )
-
-        total = len(notes)
 
         return notes, total
 
     def create_note(
         self, note: note_schemas.NoteCreate, user: user_schemas.UserOut
-    ) -> Optional[models.Note]:
+    ) -> models.Note:
         """
         Create a new note for a user.
 
@@ -103,15 +96,11 @@ class NoteRepository(BaseRepository):
         Returns:
             models.Note: The updated note.
         """
-        note = (
-            self.session.query(models.Note)
-            .filter_by(id=note_id, owner_id=user.id)
-            .one_or_none()
-        )
+        note = self._get_user_note(note_id, user.id)
         if not note:
             return None
 
-        self.session.query(models.Note).filter_by(id=note_id).update(
+        self.session.query(models.Note).filter_by(id=note_id, owner_id=user.id).update(
             updated_note_info.model_dump(), synchronize_session=False
         )
         self.session.commit()
@@ -129,14 +118,18 @@ class NoteRepository(BaseRepository):
         Returns:
             bool: True if deletion was successful, False otherwise.
         """
-        note = (
-            self.session.query(models.Note)
-            .filter_by(id=note_id, owner_id=user.id)
-            .one_or_none()
-        )
+        note = self._get_user_note(note_id, user.id)
         if not note:
             return False
 
         self.session.delete(note)
         self.session.commit()
         return True
+
+
+    def _get_user_note(self, note_id: int, user_id: int) -> Optional[models.Note]:
+        return (
+            self.session.query(models.Note)
+            .filter_by(id=note_id, owner_id=user_id)
+            .one_or_none()
+        )

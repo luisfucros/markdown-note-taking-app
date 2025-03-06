@@ -26,8 +26,6 @@ class UserService:
             models.User: The user object if found.
         """
         user = self.user_repo.get_user(email=email)
-        if not user:
-            return None
         return user
 
     def create_user(

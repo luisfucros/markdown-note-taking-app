@@ -38,9 +38,6 @@ class UserRepository(BaseRepository):
 
         Returns:
             models.User: The newly created user.
-
-        Raises:
-            HTTPException: 409 if a user with the given email already exists.
         """
         existing_user = (
             self.session.query(models.User)

@@ -43,6 +43,7 @@ class NoteService:
             html = markdown.markdown(content)
             return html
         except Exception as e:
+            # todo
             print(e)
             raise
 
