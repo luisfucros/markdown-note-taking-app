@@ -75,7 +75,7 @@ class NoteService:
 
     def create_note(
         self, note: note_schemas.NoteCreate, user: user_schemas.UserOut
-    ) -> Optional[models.Note]:
+    ) -> models.Note:
         """
         Create a new note.
 
