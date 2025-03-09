@@ -1,8 +1,9 @@
 from typing import Generator
 
-from configs.config import settings
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
+
+from configs.config import settings
 
 SQLALCHEMY_DATABASE_URL = "postgresql://%s:%s@%s:%s/%s" % (
     settings.database_username,

@@ -1,6 +1,5 @@
 from typing import Optional
 
-from authentication import oauth2
 from fastapi import (
     APIRouter,
     Depends,
@@ -12,6 +11,8 @@ from fastapi import (
     status,
 )
 from fastapi.responses import HTMLResponse
+
+from authentication import oauth2
 from schemas import note_schemas, user_schemas
 from services.note import NoteService
 
@@ -43,7 +44,8 @@ def get_markdown_note(
         note = service.get_markdown_note(id, current_user)
         if note is None:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail=f"Note with id: {id} was not found"
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Note with id: {id} was not found",
             )
         return note
     except HTTPException as e:

@@ -1,12 +1,12 @@
-from typing import Optional
 import logging
+from typing import Optional
 
 import markdown
-import models
 from fastapi import Depends
+
+import models
 from repositories.note import NoteRepository
 from schemas import note_schemas, user_schemas
-
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -75,7 +75,9 @@ class NoteService:
         Returns:
             note_schemas.NoteResponse: A response object containing the paginated notes.
         """
-        logger.info(f"Fetching notes for user {user.id} with limit {limit} and page {page}")
+        logger.info(
+            f"Fetching notes for user {user.id} with limit {limit} and page {page}"
+        )
         notes, total = self.note_repo.get_notes(user, limit, page, search)
         logger.info(f"Fetched {len(notes)} notes out of {total} for user {user.id}")
 

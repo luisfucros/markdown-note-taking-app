@@ -126,7 +126,6 @@ class NoteRepository(BaseRepository):
         self.session.commit()
         return True
 
-
     def _get_user_note(self, note_id: int, user_id: int) -> Optional[models.Note]:
         return (
             self.session.query(models.Note)

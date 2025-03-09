@@ -1,12 +1,12 @@
 import logging
 from typing import Optional
 
+from fastapi import Depends
+
 import models
 from authentication import oauth2
-from fastapi import Depends
 from repositories.user import UserRepository
 from schemas import token_schemas, user_schemas
-
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
