@@ -1,10 +1,7 @@
-import models
-from configs.database import engine
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes import auth, note, user
 
-models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="Markdown Note Taking API",
