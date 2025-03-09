@@ -1,10 +1,15 @@
 from typing import Optional
+import logging
 
 import markdown
 import models
 from fastapi import Depends
 from repositories.note import NoteRepository
 from schemas import note_schemas, user_schemas
+
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class NoteService:
@@ -28,14 +33,19 @@ class NoteService:
         Returns:
             str: The note content converted to HTML.
         """
+        logger.info(f"Fetching note with ID {note_id} for user {user.id}")
         note = self.note_repo.get_note(note_id, user)
+        if note is None:
+            logger.warning(f"Note with ID {note_id} not found for user {user.id}")
         return note
 
     def get_markdown_note(
         self, note_id: int, user: user_schemas.UserOut
     ) -> Optional[str]:
+        logger.info(f"Fetching markdown content for note {note_id} and user {user.id}")
         note = self.get_note(note_id, user)
         if note is None:
+            logger.warning(f"Markdown conversion failed: Note {note_id} not found")
             return None
 
         try:
@@ -43,8 +53,7 @@ class NoteService:
             html = markdown.markdown(content)
             return html
         except Exception as e:
-            # todo
-            print(e)
+            logger.exception(f"Error converting note {note_id} to markdown: {e}")
             raise
 
     def get_notes(
@@ -66,7 +75,9 @@ class NoteService:
         Returns:
             note_schemas.NoteResponse: A response object containing the paginated notes.
         """
+        logger.info(f"Fetching notes for user {user.id} with limit {limit} and page {page}")
         notes, total = self.note_repo.get_notes(user, limit, page, search)
+        logger.info(f"Fetched {len(notes)} notes out of {total} for user {user.id}")
 
         response = note_schemas.NoteResponse(
             data=notes, limit=limit, page=page, total=total
@@ -86,7 +97,10 @@ class NoteService:
         Returns:
             models.Note: The created note.
         """
-        return self.note_repo.create_note(note, user)
+        logger.info(f"Creating note for user {user.id}")
+        new_note = self.note_repo.create_note(note, user)
+        logger.info(f"Note created with ID {new_note.id} for user {user.id}")
+        return new_note
 
     def update_note(
         self,
@@ -105,7 +119,12 @@ class NoteService:
         Returns:
             models.Note: The updated note.
         """
+        logger.info(f"Updating note {note_id} for user {user.id}")
         note = self.note_repo.update_note(note_id, updated_note_info, user)
+        if note:
+            logger.info(f"Note {note_id} updated successfully for user {user.id}")
+        else:
+            logger.warning(f"Failed to update note {note_id} for user {user.id}")
         return note
 
     def delete_note(self, note_id: int, user: user_schemas.UserOut) -> bool:
@@ -119,5 +138,10 @@ class NoteService:
         Returns:
             Optional[Response]: A response indicating successful deletion.
         """
+        logger.info(f"Deleting note {note_id} for user {user.id}")
         response = self.note_repo.delete_note(note_id, user)
+        if response:
+            logger.info(f"Note {note_id} deleted successfully for user {user.id}")
+        else:
+            logger.warning(f"Failed to delete note {note_id} for user {user.id}")
         return response
