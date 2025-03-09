@@ -21,4 +21,4 @@ COPY src/ ./
 
 EXPOSE $PORT
 
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8001"]
+CMD sleep 10 && alembic upgrade head && uvicorn app:app --host 0.0.0.0 --port 8001
