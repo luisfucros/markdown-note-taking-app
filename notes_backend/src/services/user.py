@@ -59,5 +59,5 @@ class UserService:
             data={"user_id": new_user.id, "user_email": new_user.email}
         )
         return token_schemas.Token(
-            user_id=new_user.id, access_token=access_token, token_type="bearer"
+            id=new_user.id, access_token=access_token, token_type="bearer"
         )

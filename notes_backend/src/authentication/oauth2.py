@@ -2,15 +2,14 @@ import datetime
 from typing import Any, Dict
 
 import jwt
-from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
-from jwt.exceptions import InvalidTokenError
-from sqlalchemy.orm import Session
-
 import models as models
 from configs import database
 from configs.config import settings
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+from jwt.exceptions import InvalidTokenError
 from schemas import token_schemas, user_schemas
+from sqlalchemy.orm import Session
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
@@ -37,10 +36,11 @@ def verify_access_token(
 ) -> token_schemas.TokenData:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        id: int = int(payload.get("user_id"))
         email: str = str(payload.get("user_email"))
-        if email is None:
+        if id is None or email is None:
             raise credentials_exception
-        token_data = token_schemas.TokenData(email=email)
+        token_data = token_schemas.TokenData(id=id, email=email)
     except InvalidTokenError:
         raise credentials_exception
 
