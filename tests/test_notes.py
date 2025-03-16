@@ -25,7 +25,7 @@ def test_unauthorized_user_get_one_note(client, test_notes):
 
 
 def test_get_one_note_not_exist(authorized_client, test_notes):
-    res = authorized_client.get(f"/notes/88888")
+    res = authorized_client.get("/notes/88888")
     assert res.status_code == 404
 
 
