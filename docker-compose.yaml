@@ -11,7 +11,8 @@ services:
       - "8001:8001"
     volumes:
       - ./notes_backend/src:/app
-    command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8001", "--reload"]
+    depends_on:
+      - db
 
   db:
     image: postgres:15.10
@@ -24,6 +25,15 @@ services:
       - postgres-db:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+  
+  db-test:
+    image: postgres:15.6
+    container_name: postgres_test
+    environment:
+      - POSTGRES_PASSWORD=password123
+      - POSTGRES_DB=note_test
+    ports:
+      - "5433:5432"
 
   adminer:
     image: adminer
