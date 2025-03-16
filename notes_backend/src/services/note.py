@@ -2,9 +2,8 @@ import logging
 from typing import Optional
 
 import markdown
-from fastapi import Depends
-
 import models
+from fastapi import Depends
 from repositories.note import NoteRepository
 from schemas import note_schemas, user_schemas
 

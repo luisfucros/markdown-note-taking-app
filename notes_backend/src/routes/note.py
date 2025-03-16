@@ -1,5 +1,6 @@
 from typing import Optional
 
+from authentication import oauth2
 from fastapi import (
     APIRouter,
     Depends,
@@ -11,8 +12,6 @@ from fastapi import (
     status,
 )
 from fastapi.responses import HTMLResponse
-
-from authentication import oauth2
 from schemas import note_schemas, user_schemas
 from services.note import NoteService
 

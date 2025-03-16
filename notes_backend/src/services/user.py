@@ -1,10 +1,9 @@
 import logging
 from typing import Optional
 
-from fastapi import Depends
-
 import models
 from authentication import oauth2
+from fastapi import Depends
 from repositories.user import UserRepository
 from schemas import token_schemas, user_schemas
 
@@ -56,5 +55,9 @@ class UserService:
             return None
 
         logger.info(f"User created successfully: {new_user.email}")
-        access_token = oauth2.create_access_token(data={"user_email": new_user.email})
-        return token_schemas.Token(access_token=access_token, token_type="bearer")
+        access_token = oauth2.create_access_token(
+            data={"user_id": new_user.id, "user_email": new_user.email}
+        )
+        return token_schemas.Token(
+            user_id=new_user.id, access_token=access_token, token_type="bearer"
+        )

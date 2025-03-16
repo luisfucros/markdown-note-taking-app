@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-
 from schemas import token_schemas, user_schemas
 from services.user import UserService
 
