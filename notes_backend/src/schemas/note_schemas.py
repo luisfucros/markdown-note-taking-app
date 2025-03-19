@@ -18,6 +18,7 @@ class NoteOut(BaseModel):
     title: str
     note: str
     created_at: datetime
+    owner_id: int
 
     class Config:
         from_attributes = True
