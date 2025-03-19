@@ -108,7 +108,7 @@ class NoteService:
         note_id: int,
         updated_note_info: note_schemas.NoteCreate,
         user: user_schemas.UserOut,
-    ) -> models.Note:
+    ) -> Optional[models.Note | bool]:
         """
         Update an existing note.
 
@@ -122,13 +122,13 @@ class NoteService:
         """
         logger.info(f"Updating note {note_id} for user {user.id}")
         note = self.note_repo.update_note(note_id, updated_note_info, user)
-        if note:
+        if isinstance(note, models.Note):
             logger.info(f"Note {note_id} updated successfully for user {user.id}")
         else:
             logger.warning(f"Failed to update note {note_id} for user {user.id}")
         return note
 
-    def delete_note(self, note_id: int, user: user_schemas.UserOut) -> bool:
+    def delete_note(self, note_id: int, user: user_schemas.UserOut) -> Optional[bool]:
         """
         Delete a note.
 
@@ -141,7 +141,7 @@ class NoteService:
         """
         logger.info(f"Deleting note {note_id} for user {user.id}")
         response = self.note_repo.delete_note(note_id, user)
-        if response:
+        if response is True:
             logger.info(f"Note {note_id} deleted successfully for user {user.id}")
         else:
             logger.warning(f"Failed to delete note {note_id} for user {user.id}")

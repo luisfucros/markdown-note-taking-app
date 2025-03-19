@@ -84,7 +84,7 @@ class NoteRepository(BaseRepository):
         note_id: int,
         updated_note_info: note_schemas.NoteCreate,
         user: user_schemas.UserOut,
-    ) -> Optional[models.Note]:
+    ) -> Optional[models.Note | bool]:
         """
         Update an existing note if the user owns it.
 
@@ -97,8 +97,8 @@ class NoteRepository(BaseRepository):
             models.Note: The updated note.
         """
         note = self._get_user_note(note_id, user.id)
-        if not note:
-            return None
+        if note is None or note is False:
+            return note
 
         self.session.query(models.Note).filter_by(id=note_id, owner_id=user.id).update(
             updated_note_info.model_dump(), synchronize_session=False
@@ -107,7 +107,7 @@ class NoteRepository(BaseRepository):
         self.session.refresh(note)
         return note
 
-    def delete_note(self, note_id: int, user: user_schemas.UserOut) -> bool:
+    def delete_note(self, note_id: int, user: user_schemas.UserOut) -> Optional[bool]:
         """
         Delete an existing note if the user owns it.
 
@@ -119,14 +119,20 @@ class NoteRepository(BaseRepository):
             bool: True if deletion was successful, False otherwise.
         """
         note = self._get_user_note(note_id, user.id)
-        if not note:
-            return False
+        if note is None or note is False:
+            return note
 
         self.session.delete(note)
         self.session.commit()
         return True
 
-    def _get_user_note(self, note_id: int, user_id: int) -> Optional[models.Note]:
+    def _get_user_note(
+        self, note_id: int, user_id: int
+    ) -> Optional[models.Note | bool]:
+        note = self.session.query(models.Note).filter_by(id=note_id).one_or_none()
+        if note is not None and note.owner_id != user_id:
+            return False
+
         return (
             self.session.query(models.Note)
             .filter_by(id=note_id, owner_id=user_id)

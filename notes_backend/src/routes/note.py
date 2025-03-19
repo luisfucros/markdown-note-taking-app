@@ -115,7 +115,12 @@ def update_note(
     if updated_note is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Note not found or unauthorized",
+            detail="Note not found",
+        )
+    if updated_note is False:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Unauthorized",
         )
     return updated_note
 
@@ -127,9 +132,14 @@ def delete_note(
     current_user: user_schemas.UserOut = Depends(oauth2.get_current_user),
 ):
     response = service.delete_note(id, current_user)
-    if not response:
+    if response is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Note not found or unauthorized",
+            detail="Note not found",
+        )
+    if response is False:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Unauthorized",
         )
     return Response(status_code=status.HTTP_204_NO_CONTENT)
