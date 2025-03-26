@@ -50,8 +50,7 @@ jobs:
         run: python -m pip install --upgrade pip
       
       - name: install auth Lib
-        run: cd auth-lib \
-            && pip install -e . --no-cache-dir
+        run: cd auth-lib && pip install -e . --no-cache-dir
 
       - name: install all dependencies
         run: pip install -r notes_backend/requirements.txt
