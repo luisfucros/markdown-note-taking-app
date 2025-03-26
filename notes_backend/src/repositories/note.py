@@ -1,7 +1,7 @@
 from typing import List, Optional, Tuple
 
-import models
-from schemas import note_schemas, user_schemas
+from auth_lib import models
+from auth_lib.schemas import note_schemas, user_schemas
 
 from .base import BaseRepository
 

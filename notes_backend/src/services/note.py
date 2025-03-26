@@ -2,10 +2,10 @@ import logging
 from typing import Optional
 
 import markdown
-import models
+from auth_lib import models
 from fastapi import Depends
 from repositories.note import NoteRepository
-from schemas import note_schemas, user_schemas
+from auth_lib.schemas import note_schemas, user_schemas
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

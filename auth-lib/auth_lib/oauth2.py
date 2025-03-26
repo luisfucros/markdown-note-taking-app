@@ -2,13 +2,13 @@ import datetime
 from typing import Any, Dict
 
 import jwt
-import models as models
-from configs import database
-from configs.config import settings
+import auth_lib.models as models
+import auth_lib.database as database
+from auth_lib.config import settings
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
-from schemas import token_schemas, user_schemas
+from auth_lib.schemas import token_schemas, user_schemas
 from sqlalchemy.orm import Session
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")

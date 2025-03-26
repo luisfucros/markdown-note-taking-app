@@ -1,8 +1,8 @@
 from typing import Optional
 
-import models
+from auth_lib import models
 from repositories.base import BaseRepository
-from schemas import user_schemas
+from auth_lib.schemas import user_schemas
 from utils import utils
 
 

@@ -1,4 +1,4 @@
-from configs.database import get_db
+from auth_lib.database import get_db
 from fastapi import Depends
 from sqlalchemy import orm
 

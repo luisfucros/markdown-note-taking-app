@@ -1,6 +1,6 @@
 from typing import Generator
 
-from configs.config import settings
+from auth_lib.config import settings
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 

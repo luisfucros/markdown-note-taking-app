@@ -1,5 +1,5 @@
 import pytest
-from schemas import note_schemas
+from auth_lib.schemas import note_schemas
 
 
 def test_get_all_notes(authorized_client, test_notes):

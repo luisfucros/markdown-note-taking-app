@@ -17,6 +17,10 @@ COPY ./requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Install auth lib
+COPY wheels/ /tmp/py-wheels
+RUN cd /tmp/py-wheels && ls . | grep \.whl | xargs pip install --no-cache-dir
+
 COPY src/ ./
 
 EXPOSE $PORT

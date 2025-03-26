@@ -1,6 +1,6 @@
 from typing import Optional
 
-from authentication import oauth2
+from auth_lib import oauth2
 from fastapi import (
     APIRouter,
     Depends,
@@ -12,7 +12,7 @@ from fastapi import (
     status,
 )
 from fastapi.responses import HTMLResponse
-from schemas import note_schemas, user_schemas
+from auth_lib.schemas import note_schemas, user_schemas
 from services.note import NoteService
 
 router = APIRouter(prefix="/notes", tags=["Notes"])

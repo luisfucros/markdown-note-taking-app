@@ -1,9 +1,9 @@
-import models
+from auth_lib import models
 import pytest
 from app import app
-from authentication.oauth2 import create_access_token
-from configs.config import settings
-from configs.database import Base, get_db
+from auth_lib.oauth2 import create_access_token
+from auth_lib.config import settings
+from auth_lib.database import Base, get_db
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker

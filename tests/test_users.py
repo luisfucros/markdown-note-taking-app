@@ -1,7 +1,7 @@
 import jwt
 import pytest
-from configs.config import settings
-from schemas import token_schemas
+from auth_lib.config import settings
+from auth_lib.schemas import token_schemas
 
 
 def test_create_user(client):
