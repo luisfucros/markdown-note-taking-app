@@ -1,5 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException, status
 from auth_lib.schemas import token_schemas, user_schemas
+from fastapi import APIRouter, Depends, HTTPException, status
 from services.user import UserService
 
 router = APIRouter(prefix="/users", tags=["Users"])

@@ -1,9 +1,7 @@
-from auth_lib import models
-from auth_lib import oauth2
-from auth_lib import database
+from auth_lib import database, models, oauth2
+from auth_lib.schemas import token_schemas
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm
-from auth_lib.schemas import token_schemas
 from sqlalchemy.orm import Session
 from utils import utils
 

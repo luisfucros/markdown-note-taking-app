@@ -3,9 +3,9 @@ from typing import Optional
 
 import markdown
 from auth_lib import models
+from auth_lib.schemas import note_schemas, user_schemas
 from fastapi import Depends
 from repositories.note import NoteRepository
-from auth_lib.schemas import note_schemas, user_schemas
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -41,6 +41,16 @@ class NoteService:
     def get_markdown_note(
         self, note_id: int, user: user_schemas.UserOut
     ) -> Optional[str]:
+        """
+        Retrieve a note and convert its content to Markdown.
+
+        Args:
+            note_id (int): The ID of the note to retrieve.
+            user (user_schemas.UserOut): The user requesting the note.
+
+        Returns:
+            Optional[str]: The note content converted to HTML, or None if not found.
+        """
         logger.info(f"Fetching markdown content for note {note_id} and user {user.id}")
         note = self.get_note(note_id, user)
         if note is None:
