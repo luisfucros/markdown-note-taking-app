@@ -1,15 +1,14 @@
-from auth_lib import database, oauth2
-from auth_lib.schemas import user_schemas, note_schemas
-from note_bot.agent.prompts import grammar_agent_prompt
-from fastapi import Depends, FastAPI, WebSocket, WebSocketDisconnect, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.orm import Session
-import logging
 import asyncio
-from note_bot.bot import client
-from note_bot.bot import Bot
+import logging
 import os
 
+from auth_lib import database, oauth2
+from auth_lib.schemas import note_schemas, user_schemas
+from fastapi import Depends, FastAPI, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi.middleware.cors import CORSMiddleware
+from note_bot.agent.prompts import grammar_agent_prompt
+from note_bot.bot import Bot, client
+from sqlalchemy.orm import Session
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +41,7 @@ async def websocket_chat(websocket: WebSocket, db: Session = Depends(database.ge
         raise HTTPException(status_code=401, detail="Missing access token")
 
     oauth2.get_current_user(access_token, db)
-    
+
     await websocket.accept()
     bot = Bot()
     try:
@@ -50,18 +49,23 @@ async def websocket_chat(websocket: WebSocket, db: Session = Depends(database.ge
             data = await asyncio.wait_for(websocket.receive_json(), timeout=60)
             messages = data.get("messages", [])
             if not messages:
-                await websocket.send_json({"type":"error", "message": "Messages cannot be empty"})
+                await websocket.send_json(
+                    {"type": "error", "message": "Messages cannot be empty"}
+                )
                 continue
             await bot.run(messages, access_token, websocket)
     except WebSocketDisconnect:
         print("WebSocket disconnected")
 
+
 @app.post("/bot/grammar", response_model=note_schemas.Note)
-async def grammar_check(user_input: note_schemas.Note,
-                         current_user: user_schemas.UserOut = Depends(oauth2.get_current_user)):
+async def grammar_check(
+    user_input: note_schemas.Note,
+    current_user: user_schemas.UserOut = Depends(oauth2.get_current_user),
+):
     response = await client.responses.create(
         model=os.getenv("MODEL_NAME", "gpt-4o-mini-2024-07-18"),
-        input=grammar_agent_prompt.format(user_input=user_input.note)
+        input=grammar_agent_prompt.format(user_input=user_input.note),
     )
 
     return note_schemas.Note(note=response.output_text)

@@ -21,7 +21,6 @@ from openai.types.responses import ResponseTextDeltaEvent
 from .agent.agent import notes_agent
 from .agent.tools.notes_client import JWTTokenManager
 
-
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
