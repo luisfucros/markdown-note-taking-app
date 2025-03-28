@@ -8,6 +8,7 @@ import logging
 import asyncio
 from note_bot.bot import client
 from note_bot.bot import Bot
+import os
 
 
 logger = logging.getLogger(__name__)
@@ -55,12 +56,12 @@ async def websocket_chat(websocket: WebSocket, db: Session = Depends(database.ge
     except WebSocketDisconnect:
         print("WebSocket disconnected")
 
-
-@app.post("/bot/grammar")
+@app.post("/bot/grammar", response_model=note_schemas.Note)
 async def grammar_check(user_input: note_schemas.Note,
                          current_user: user_schemas.UserOut = Depends(oauth2.get_current_user)):
     response = await client.responses.create(
         model=os.getenv("MODEL_NAME", "gpt-4o-mini-2024-07-18"),
         input=grammar_agent_prompt.format(user_input=user_input.note)
     )
-    return response.output_text
+
+    return note_schemas.Note(note=response.output_text)
